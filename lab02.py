@@ -3,7 +3,7 @@ def carica_da_file(file_path):
     try:
         album = []
         with open(file_path, "r", encoding = 'utf-8') as file:
-            file.readline()
+            file.readline() #salta la prima riga ( L'intestazione )
             for riga in file:
                 riga = riga.strip()
 
@@ -14,6 +14,8 @@ def carica_da_file(file_path):
                 mese = int (parti[3])
                 anno = int (parti[4])
 
+                #creazione del dizionario che rappresenta la singola foto
+
                 foto = {
                     "codice": codice,
                     "titolo": titolo,
@@ -21,13 +23,13 @@ def carica_da_file(file_path):
                     "mese": mese,
                     "anno": anno
                 }
-
+                #cerchiamo se l'anno è gia nell'album, altrimenti lo aggiungiamo
                 for elemento in album:
                     if elemento[0] == anno:
                         elemento[1].append(foto)
                         break
                     else:
-                        album.append([anno,[foto]])
+                        album.append([anno,[foto]])         #L'album sarà in questa forma in tutto il programma
         return album
 
     except FileNotFoundError:
@@ -36,10 +38,12 @@ def carica_da_file(file_path):
 
 def aggiungi_foto(album, codice, titolo, autore, mese, anno, file_path):
     """Aggiunge una foto all'album, creando l'anno al volo se non è ancora presente"""
+
+    # controllo validità mese
     if mese < 1 or mese > 12:
         return None
 
-
+    # controllo validità codice
     for elemento in album:
         for f in elemento[1]:
             if f["codice"] == codice:
@@ -53,15 +57,17 @@ def aggiungi_foto(album, codice, titolo, autore, mese, anno, file_path):
         "anno": anno
     }
 
-
+    #apriamo il file in modalità append in modo da aggiungere la riga in coda
     try:
         with open(file_path,"a", encoding = 'utf-8') as file:
-            riga = f'{codice},{titolo},{autore},{mese},{anno}'
+            riga = f'{codice},{titolo},{autore},{mese},{anno} \n'
             file.write(riga)
 
 
     except FileNotFoundError:
         return None
+
+    #aggiorniamo l'album
 
     for elemento in album:
         if elemento[0] == anno:
@@ -81,23 +87,24 @@ def cerca_foto(album, codice):
 
     for elemento in album:
         for f in elemento[1]:
-            if f['codice'] == codice
+            if f['codice'] == codice:
+                #trovato il codice, restituiamo tutti i dati della foto
                 return f"{f['codice']},{f['titolo']}, {f['autore']}, {f['mese']}, {f['anno']} "
-    return None
+    return None #ritorna None se non trova la foto
 
 def elenco_foto_anno_per_titolo(album, anno):
     """Ordina i titoli delle foto di un dato anno in ordine alfabetico"""
     anno = int(anno)
 
     for elemento in album:
-        if elemento[0] == anno
-            titoli = [f['titolo'] for f in elemento[1]]
-            titoli.sort
+        if elemento[0] == anno:
+            titoli = [f['titolo'] for f in elemento[1]] #estrae solamente i titoli delle foto di quell'anno
+            titoli.sort()
 
             return titoli
 
     return None
-
+    #L'anno richiesto non è presente nell'album
 
 def main():
     album = []
