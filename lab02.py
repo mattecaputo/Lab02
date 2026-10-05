@@ -36,7 +36,42 @@ def carica_da_file(file_path):
 
 def aggiungi_foto(album, codice, titolo, autore, mese, anno, file_path):
     """Aggiunge una foto all'album, creando l'anno al volo se non è ancora presente"""
-    # TODO
+    if mese < 1 or mese > 12:
+        return None
+
+
+    for elemento in album:
+        for f in elemento[1]:
+            if f["codice"] == codice:
+                return None
+
+    foto = {
+        "codice": codice,
+        "titolo": titolo,
+        "autore": autore,
+        "mese": mese,
+        "anno": anno
+    }
+
+
+    try:
+        with open(file_path,"a", encoding = 'utf-8') as file:
+            riga = f'{codice},{titolo},{autore},{mese},{anno}'
+            file.write(riga)
+
+
+    except FileNotFoundError:
+        return None
+
+    for elemento in album:
+        if elemento[0] == anno:
+            elemento[1].append(foto)
+            break
+    else:
+        album.append([anno, [foto]])
+
+
+    return foto
 
 
 def cerca_foto(album, codice):
